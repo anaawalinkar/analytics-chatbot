@@ -18,7 +18,7 @@ class AnalyticsChatbot:
     def __init__(self):
         """Initialize the chatbot with Gemini API."""
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-pro",
+            model="gemini-2.5-pro",
             google_api_key=config.GEMINI_API_KEY,
             temperature=0.7
         )
