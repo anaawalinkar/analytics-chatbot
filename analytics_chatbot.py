@@ -4,10 +4,10 @@ Analytics Chatbot using LangChain and Gemini API.
 import pandas as pd
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from typing import Optional, List
+from typing import Optional, List, Set
 import config
 from data_loader import get_data_summary, get_data_info
-from visualizer import create_visualizations
+from visualizer import create_visualizations, get_plot_type_selection
 
 
 class AnalyticsChatbot:
@@ -94,12 +94,15 @@ class AnalyticsChatbot:
         except Exception as e:
             return f"Error generating analysis: {str(e)}"
     
-    def generate_visualizations(self, output_dir: str = "plots") -> List[str]:
+    def generate_visualizations(self, output_dir: str = "plots", plot_types: Optional[List[str]] = None, interactive: bool = False) -> List[str]:
         """
         Generate visualizations for the loaded dataset.
         
         Args:
             output_dir: Directory to save plots
+            plot_types: Optional list of plot types to generate. If None and interactive=False, generates all.
+                       Valid values: 'distribution', 'correlation', 'boxplot', 'countplot'
+            interactive: If True, prompts user to select plot types interactively
             
         Returns:
             List of paths to generated plot files
@@ -107,7 +110,16 @@ class AnalyticsChatbot:
         if self.df is None:
             raise ValueError("Please load a dataset first using load_data()")
         
-        return create_visualizations(self.df, output_dir)
+        # Convert list to set if provided
+        plot_types_set = None
+        if interactive:
+            plot_types_set = get_plot_type_selection(self.df)
+            if not plot_types_set:
+                return []  # User cancelled
+        elif plot_types is not None:
+            plot_types_set = set(plot_types)
+        
+        return create_visualizations(self.df, output_dir, plot_types_set)
     
     def chat(self, user_input: str) -> str:
         """

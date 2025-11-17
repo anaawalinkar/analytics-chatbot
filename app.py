@@ -47,10 +47,13 @@ def main():
         print("Generating Visualizations...")
         print("=" * 60 + "\n")
         try:
-            plot_paths = chatbot.generate_visualizations()
-            print(f"✓ Generated {len(plot_paths)} visualizations in 'plots' directory")
-            for path in plot_paths:
-                print(f"  - {path}")
+            plot_paths = chatbot.generate_visualizations(interactive=True)
+            if plot_paths:
+                print(f"\n✓ Generated {len(plot_paths)} visualizations in 'plots' directory")
+                for path in plot_paths:
+                    print(f"  - {path}")
+            else:
+                print("No visualizations generated.")
         except Exception as e:
             print(f"⚠️  Error generating visualizations: {e}")
         
@@ -136,10 +139,13 @@ def main():
                         print("Please load a dataset first using 'load <file_path>'")
                     else:
                         print("\nGenerating visualizations...\n")
-                        plot_paths = chatbot.generate_visualizations()
-                        print(f"✓ Generated {len(plot_paths)} visualizations")
-                        for path in plot_paths:
-                            print(f"  - {path}")
+                        plot_paths = chatbot.generate_visualizations(interactive=True)
+                        if plot_paths:
+                            print(f"\n✓ Generated {len(plot_paths)} visualizations")
+                            for path in plot_paths:
+                                print(f"  - {path}")
+                        else:
+                            print("No visualizations generated.")
                         print()
                 
                 elif user_input:
