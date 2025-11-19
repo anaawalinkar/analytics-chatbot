@@ -49,8 +49,6 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 if 'data_loaded' not in st.session_state:
     st.session_state.data_loaded = False
-if 'analysis' not in st.session_state:
-    st.session_state.analysis = None
 if 'plot_paths' not in st.session_state:
     st.session_state.plot_paths = []
 if 'chat_history' not in st.session_state:
@@ -73,7 +71,6 @@ def load_data_from_file(uploaded_file):
         st.session_state.chatbot.load_data(tmp_path)
         st.session_state.df = st.session_state.chatbot.df
         st.session_state.data_loaded = True
-        st.session_state.analysis = None
         st.session_state.plot_paths = []
         
         # Clean up temp file
@@ -122,7 +119,6 @@ def main():
                 st.session_state.data_loaded = False
                 st.session_state.df = None
                 st.session_state.chatbot = None
-                st.session_state.analysis = None
                 st.session_state.plot_paths = []
                 st.session_state.chat_history = []
                 st.rerun()
@@ -143,14 +139,13 @@ def main():
             
             st.markdown("""
             ### Features:
-            - **Automatic Data Analysis** - Get instant insights from your data
             - **Interactive Visualizations** - Choose which plots to generate
             - **AI Chat Assistant** - Ask questions about your data
             - **Smart Insights** - Discover patterns and trends
             """)
     else:
         # Main tabs
-        tab1, tab2, tab3, tab4 = st.tabs(["Data Preview", "Visualizations", "AI Analysis", "Chat"])
+        tab1, tab2, tab3 = st.tabs(["Data Preview", "Visualizations", "Chat"])
         
         df = st.session_state.df
         
@@ -252,43 +247,8 @@ def main():
                         if os.path.exists(plot_path):
                             st.image(plot_path, caption=os.path.basename(plot_path))
         
-        # Tab 3: AI Analysis
+        # Tab 3: Chat
         with tab3:
-            st.header("AI-Powered Analysis")
-            
-            col1, col2 = st.columns([3, 1])
-            
-            with col1:
-                query = st.text_input(
-                    "Ask a specific question (optional)",
-                    placeholder="e.g., What are the key trends in this data?",
-                    help="Leave empty for a general analysis"
-                )
-            
-            with col2:
-                st.markdown("<br>", unsafe_allow_html=True)  # Spacing
-                analyze_button = st.button("Analyze", type="primary", use_container_width=True)
-            
-            if analyze_button:
-                with st.spinner("AI is analyzing your data..."):
-                    try:
-                        if query:
-                            analysis = st.session_state.chatbot.analyze(query=query)
-                        else:
-                            analysis = st.session_state.chatbot.analyze()
-                        
-                        st.session_state.analysis = analysis
-                    except Exception as e:
-                        st.error(f"Error during analysis: {str(e)}")
-            
-            # Display analysis
-            if st.session_state.analysis:
-                st.markdown("---")
-                st.markdown("### Analysis Results")
-                st.markdown(st.session_state.analysis)
-        
-        # Tab 4: Chat
-        with tab4:
             st.header("Chat with AI Assistant")
             
             # Display chat history
